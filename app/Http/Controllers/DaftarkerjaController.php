@@ -153,5 +153,59 @@ public function destroy($id)
     return redirect()->route('Daftarkerja.index')->with('success', 'Job deleted successfully');
 }
 
+public function edit($id)
+{
+    // Logika untuk menampilkan form edit
+    $daftarKerja = Daftarkerja::findOrFail($id);
+
+    return view('daftarkerja.edit', compact('daftarKerja'));
+}
+
+
+public function update(Request $request, $id)
+{
+    $daftarkerja = Daftarkerja::findOrFail($id);
+
+    $validatedData = $request->validate([
+        'title' => 'required|string',
+        'tags' => 'nullable|string',
+        'company' => 'required|string',
+        'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048', // Ubah menjadi nullable agar tidak wajib upload logo saat update
+        'type' => 'required|in:Courses,Jobs,Internship',
+        'apply_link' => 'required|string',
+        'content' => 'nullable|string',
+    ]);
+
+    // Update data pekerjaan
+    $daftarkerja->update([
+        'title' => $validatedData['title'],
+        'company' => $validatedData['company'],
+        'type' => $validatedData['type'],
+        'apply_link' => $validatedData['apply_link'],
+        'content' => $validatedData['content'],
+    ]);
+
+    // Update tags
+    $tagNames = explode(',', $request->input('tags'));
+    $tagIds = [];
+    foreach ($tagNames as $tagName) {
+        $tagName = trim($tagName);
+        $tag = Tag::firstOrCreate([
+            'slug' => Str::slug(trim($tagName)),
+        ], [
+            'name' => ucwords(trim($tagName)),
+        ]);
+        $tagIds[] = $tag->id;
+    }
+    $daftarkerja->tags()->sync($tagIds);
+
+    // Update logo jika ada file yang diupload
+    if ($request->hasFile('logo')) {
+        $logoPath = $request->file('logo')->store('logos', 'public');
+        $daftarkerja->update(['logo' => $logoPath]);
+    }
+
+    return redirect()->route('Daftarkerja.index')->with('success', 'Pekerjaan atau kursus berhasil diupdate!');
+}
 
 }

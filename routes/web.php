@@ -56,6 +56,11 @@ Route::middleware(['auth', 'check.role:recruiter'])->group(function () {
             ->name('Daftarkerja.store');
         Route::get('/new', [Controllers\DaftarkerjaController::class, 'create'])
             ->name('Daftarkerja.create');
+        Route::get('/daftarkerja/{id}/edit', [Controllers\DaftarkerjaController::class, 'edit'])
+            ->name('Daftarkerja.edit');
+        Route::put('/daftarkerja/{id}',[Controllers\DaftarkerjaController::class, 'update'])
+            ->name('Daftarkerja.update');
+
         
     });;
     Route::view('/not_recruiter', 'not_recruiter')->name('not_recruiter');

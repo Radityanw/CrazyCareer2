@@ -37,6 +37,13 @@
                                 </button>
                             </form>
                         </div>
+
+                        <!-- Tombol Edit -->
+                        <div class="flex items-end ml-2">
+                            <a href="{{ route('Daftarkerja.edit', ['id' => $Daftarkerja->id]) }}">Edit</a>
+
+                            </a>
+                        </div>
             
                         <!-- Informasi Waktu dan Jumlah Klik -->
                         <div class="md:flex-grow flex flex-col items-end justify-center ml-4">
